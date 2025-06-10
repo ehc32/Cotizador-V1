@@ -1,63 +1,36 @@
-import Link from "next/link";
-import { DeployButton } from "./deploy-button";
-import { GroqIcon } from "./icons";
+import { Menu, Settings, ExternalLink } from "lucide-react"
+import logo from "@/public/471146904_122180586404046741_1301462224554776152_n.jpg"
 
 export const Header = () => {
   return (
-    <div className="fixed right-0 left-0 w-full top-0 bg-white dark:bg-zinc-950">
-      <div className="flex justify-between items-center p-4">
-        <div className="flex flex-row items-center gap-2 shrink-0 ">
-          <span className="jsx-e3e12cc6f9ad5a71 flex flex-row items-center gap-2 home-links">
-            <Link
-              className="text-zinc-800 dark:text-zinc-100 -translate-y-[.5px]"
-              rel="noopener"
-              target="_blank"
-              href="https://vercel.com/"
-            >
-              <svg
-                data-testid="geist-icon"
-                height={18}
-                strokeLinejoin="round"
-                viewBox="0 0 16 16"
-                width={18}
-                style={{ color: "currentcolor" }}
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M8 1L16 15H0L8 1Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </Link>
-            <div className="jsx-e3e12cc6f9ad5a71 w-4 text-lg text-center text-zinc-300 dark:text-zinc-600">
-              <svg
-                data-testid="geist-icon"
-                height={16}
-                strokeLinejoin="round"
-                viewBox="0 0 16 16"
-                width={16}
-                style={{ color: "currentcolor" }}
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M4.01526 15.3939L4.3107 14.7046L10.3107 0.704556L10.6061 0.0151978L11.9849 0.606077L11.6894 1.29544L5.68942 15.2954L5.39398 15.9848L4.01526 15.3939Z"
-                  fill="currentColor"
-                />
-              </svg>
+    <div className="fixed right-0 left-0 w-full top-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50">
+      <div className="flex justify-between items-center px-6 py-4">
+        <div className="flex flex-row items-center gap-4">
+          <div className="flex items-center gap-3">
+            <img src={logo.src || "/placeholder.svg"} alt="SAAVE" className="h-8" />
+            <div className="hidden sm:block">
+              <h2 className="text-lg font-light text-gray-800 tracking-wide">SAAVE</h2>
+              <p className="text-xs text-gray-500 -mt-1">ARQUITECTOS</p>
             </div>
-            <div className="jsx-e3e12cc6f9ad5a71 flex flex-row items-center gap-4">
-              <Link className="flex flex-row items-end gap-2" target="_blank" href="https://groq.com">
-                <GroqIcon size={32} />
-              </Link>
-            </div>
-          </span>
+          </div>
         </div>
-        <div className="flex flex-row items-center gap-2 shrink-0">
-          <DeployButton />
+
+        <div className="flex items-center gap-3">
+          <a
+            href="https://www.saavearquitectos.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-800 transition-colors px-3 py-1.5 border border-gray-200 rounded-md hover:bg-gray-50"
+          >
+            <ExternalLink size={14} />
+            Visita nuestra página
+          </a>
+         
+          <button className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors sm:hidden">
+            <Menu size={18} />
+          </button>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

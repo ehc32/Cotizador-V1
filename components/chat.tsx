@@ -41,7 +41,7 @@ export default function Chat() {
       )}
       <form
         onSubmit={handleSubmit}
-        className="pb-8 bg-white dark:bg-black w-full max-w-xl mx-auto px-4 sm:px-0"
+        className="pb-8 bg-[#f9fafb] dark:bg-black w-full max-w-xl mx-auto px-4 sm:px-0"
       >
         <Textarea
           selectedModel={selectedModel}

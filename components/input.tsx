@@ -22,7 +22,7 @@ export const Input = ({
         className="bg-secondary py-6 w-full rounded-xl pr-12"
         value={input}
         autoFocus
-        placeholder={"Say something..."}
+        placeholder={"Escribe algo..."}
         onChange={handleInputChange}
       />
       {status === "streaming" || status === "submitted" ? (

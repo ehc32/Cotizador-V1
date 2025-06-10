@@ -16,7 +16,7 @@ import {
   SparklesIcon,
   StopCircle,
 } from "lucide-react";
-import { SpinnerIcon } from "./icons";
+import { Logo } from "./icons";
 
 interface ReasoningPart {
   type: "reasoning";
@@ -64,7 +64,7 @@ export function ReasoningMessagePart({
         <div className="flex flex-row gap-2 items-center">
           <div className="font-medium text-sm">Reasoning</div>
           <div className="animate-spin">
-            <SpinnerIcon />
+            <Logo />
           </div>
         </div>
       ) : (
