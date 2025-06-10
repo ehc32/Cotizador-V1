@@ -1,4 +1,5 @@
-import { Menu, Settings, ExternalLink } from "lucide-react"
+import { Menu, ExternalLink } from "lucide-react"
+import Image from "next/image"
 import logo from "@/public/471146904_122180586404046741_1301462224554776152_n.jpg"
 
 export const Header = () => {
@@ -7,7 +8,7 @@ export const Header = () => {
       <div className="flex justify-between items-center px-6 py-4">
         <div className="flex flex-row items-center gap-4">
           <div className="flex items-center gap-3">
-            <img src={logo.src || "/placeholder.svg"} alt="SAAVE" className="h-8" />
+            <Image src={logo.src || "/placeholder.svg"} alt="SAAVE" width={32} height={32} />
             <div className="hidden sm:block">
               <h2 className="text-lg font-light text-gray-800 tracking-wide">SAAVE</h2>
               <p className="text-xs text-gray-500 -mt-1">ARQUITECTOS</p>

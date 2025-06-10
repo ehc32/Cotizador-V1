@@ -4,7 +4,7 @@ import { useEffect } from "react"
 
 interface PDFDownloadHandlerProps {
   shouldDownload: boolean
-  cotizacionData: any
+  cotizacionData: object
   onDownloadComplete: () => void
 }
 

@@ -1,5 +1,3 @@
-import type React from "react"
-
 export const ProjectOverview = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] px-6">
@@ -29,4 +27,4 @@ export const ProjectOverview = () => {
       </div>
     </div>
   )
-}
+} 

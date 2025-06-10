@@ -3,7 +3,7 @@
 import { PDFDownloadButton } from "./pdf-download-button"
 
 interface PDFDownloadWrapperProps {
-  cotizacionData: any
+  cotizacionData: object
 }
 
 export function PDFDownloadWrapper({ cotizacionData }: PDFDownloadWrapperProps) {

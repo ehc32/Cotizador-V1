@@ -1,7 +1,50 @@
 import jsPDF from "jspdf"
 
 // Importación dinámica de autoTable para evitar problemas de SSR
-let autoTable: any
+let autoTable: ((doc: jsPDF, options: AutoTableOptions) => void) | null = null
+
+interface AutoTableOptions {
+  startY: number
+  head: string[][]
+  body: string[][]
+  theme: string
+  headStyles: {
+    fillColor: readonly [number, number, number]
+    textColor: readonly [number, number, number]
+    fontStyle: string
+  }
+  styles: {
+    fontSize: number
+    cellPadding: number
+  }
+  columnStyles?: {
+    [key: number]: {
+      fontStyle?: string
+      halign?: string
+      fontSize?: number
+    }
+  }
+  didParseCell?: (data: AutoTableCellData) => void
+}
+
+interface AutoTableCellData {
+  row: {
+    index: number
+  }
+  cell: {
+    styles: {
+      fillColor: readonly [number, number, number]
+      textColor: readonly [number, number, number]
+      fontStyle: string
+    }
+  }
+}
+
+interface ExtendedJsPDF extends jsPDF {
+  lastAutoTable: {
+    finalY: number
+  }
+}
 
 interface CotizacionData {
   informacion_cliente: {
@@ -52,10 +95,10 @@ export async function generatePDF(data: CotizacionData): Promise<Buffer> {
     // Importar autoTable dinámicamente
     if (!autoTable) {
       const autoTableModule = await import("jspdf-autotable")
-      autoTable = autoTableModule.default
+      autoTable = autoTableModule.default as (doc: jsPDF, options: AutoTableOptions) => void
     }
 
-    const doc = new jsPDF()
+    const doc = new jsPDF() as ExtendedJsPDF
 
     // Configuración de colores
     const primaryColor = [41, 128, 185] as const // Azul corporativo
@@ -133,36 +176,38 @@ export async function generatePDF(data: CotizacionData): Promise<Buffer> {
     areasData.push(["ÁREA TOTAL", data.resumen.area_total.toString(), ""])
 
     // Usar autoTable con la función importada dinámicamente
-    autoTable(doc, {
-      startY: yPosition,
-      head: [areasData[0]],
-      body: areasData.slice(1),
-      theme: "striped",
-      headStyles: {
-        fillColor: primaryColor,
-        textColor: [255, 255, 255],
-        fontStyle: "bold",
-      },
-      styles: {
-        fontSize: 10,
-        cellPadding: 5,
-      },
-      columnStyles: {
-        0: { fontStyle: "bold" },
-        1: { halign: "center" },
-        2: { fontSize: 9 },
-      },
-      didParseCell: (data: any) => {
-        if (data.row.index === areasData.length - 2) {
-          // Última fila (ÁREA TOTAL)
-          data.cell.styles.fillColor = accentColor
-          data.cell.styles.textColor = [255, 255, 255]
-          data.cell.styles.fontStyle = "bold"
-        }
-      },
-    })
+    if (autoTable) {
+      autoTable(doc, {
+        startY: yPosition,
+        head: [areasData[0]],
+        body: areasData.slice(1),
+        theme: "striped",
+        headStyles: {
+          fillColor: primaryColor,
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+        },
+        styles: {
+          fontSize: 10,
+          cellPadding: 5,
+        },
+        columnStyles: {
+          0: { fontStyle: "bold" },
+          1: { halign: "center" },
+          2: { fontSize: 9 },
+        },
+        didParseCell: (data: AutoTableCellData) => {
+          if (data.row.index === areasData.length - 2) {
+            // Última fila (ÁREA TOTAL)
+            data.cell.styles.fillColor = accentColor
+            data.cell.styles.textColor = [255, 255, 255]
+            data.cell.styles.fontStyle = "bold"
+          }
+        },
+      })
+    }
 
-    yPosition = (doc as any).lastAutoTable.finalY + 20
+    yPosition = doc.lastAutoTable.finalY + 20
 
     // Cotización
     doc.setFontSize(16)
@@ -177,28 +222,30 @@ export async function generatePDF(data: CotizacionData): Promise<Buffer> {
       ["Construcción", data.precios_m2.construccion, `${data.resumen.area_total}m²`, data.cotizacion.construccion],
     ]
 
-    autoTable(doc, {
-      startY: yPosition,
-      head: [cotizacionData[0]],
-      body: cotizacionData.slice(1),
-      theme: "striped",
-      headStyles: {
-        fillColor: primaryColor,
-        textColor: [255, 255, 255],
-        fontStyle: "bold",
-      },
-      styles: {
-        fontSize: 11,
-        cellPadding: 6,
-      },
-      columnStyles: {
-        1: { halign: "right" },
-        2: { halign: "center" },
-        3: { halign: "right", fontStyle: "bold" },
-      },
-    })
+    if (autoTable) {
+      autoTable(doc, {
+        startY: yPosition,
+        head: [cotizacionData[0]],
+        body: cotizacionData.slice(1),
+        theme: "striped",
+        headStyles: {
+          fillColor: primaryColor,
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+        },
+        styles: {
+          fontSize: 11,
+          cellPadding: 6,
+        },
+        columnStyles: {
+          1: { halign: "right" },
+          2: { halign: "center" },
+          3: { halign: "right", fontStyle: "bold" },
+        },
+      })
+    }
 
-    yPosition = (doc as any).lastAutoTable.finalY + 10
+    yPosition = doc.lastAutoTable.finalY + 10
 
     // Total final
     doc.setFillColor(accentColor[0], accentColor[1], accentColor[2])

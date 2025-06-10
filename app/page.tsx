@@ -1,4 +1,3 @@
-import { ProjectOverview } from "../components/project-overview"
 import { Header } from "../components/header"
 import Chat from "@/components/chat"
 

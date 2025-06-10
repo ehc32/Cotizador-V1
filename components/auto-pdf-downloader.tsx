@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 
 interface AutoPDFDownloaderProps {
-  cotizacionData: any
+  cotizacionData: object
 }
 
 export function AutoPDFDownloader({ cotizacionData }: AutoPDFDownloaderProps) {

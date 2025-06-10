@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 
-export function SimplePDFButton({ cotizacionData }: { cotizacionData: any }) {
+export function SimplePDFButton({ cotizacionData }: { cotizacionData: object }) {
   const [loading, setLoading] = useState(false)
 
   const downloadPDF = async () => {

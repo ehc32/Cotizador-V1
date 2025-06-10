@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Download, FileText, Loader2, CheckCircle } from "lucide-react"
 
 interface PDFDownloadSectionProps {
-  cotizacionData: any
+  cotizacionData: object
 }
 
 export function PDFDownloadSection({ cotizacionData }: PDFDownloadSectionProps) {
