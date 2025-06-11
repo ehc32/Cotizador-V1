@@ -166,7 +166,7 @@ export const cotizadorTool = tool({
         area: ESPACIOS_ADICIONALES[espacio],
       }))
 
-      return {
+      const resultado = {
         informacion_cliente: {
           tiene_lote: tiene_lote === "si" ? "Sí" : "No, en proceso de compra",
         },
@@ -205,6 +205,8 @@ export const cotizadorTool = tool({
           "📐 ÁREA TOTAL": `${Math.round(area_total * 100) / 100}m²`,
         },
       }
+
+      return resultado
     } catch (error) {
       console.error("Error en cotizadorTool:", error)
       throw new Error(`Error al calcular cotización: ${error instanceof Error ? error.message : "Error desconocido"}`)
@@ -213,44 +215,38 @@ export const cotizadorTool = tool({
 })
 
 export const descargarPDFTool = tool({
-  description: "Genera y descarga un PDF con la cotización cuando el usuario confirma",
+  description: "Prepara la descarga del PDF con la cotización cuando el usuario confirma",
   parameters: z.object({
     confirmar_descarga: z.boolean().describe("Confirmación del usuario para descargar el PDF"),
     datos_cotizacion: z.any().describe("Datos completos de la cotización para incluir en el PDF"),
   }),
   execute: async ({ confirmar_descarga, datos_cotizacion }) => {
     if (!confirmar_descarga) {
-      return "Descarga cancelada. ¿Hay algo más en lo que pueda ayudarte?"
+      return {
+        mensaje: "Descarga cancelada. ¿Hay algo más en lo que pueda ayudarte?",
+        descargar_pdf: false,
+      }
     }
 
     try {
-      // Validar datos antes de enviar
+      // Validar datos antes de proceder
       if (!datos_cotizacion || !datos_cotizacion.resumen || !datos_cotizacion.cotizacion) {
         throw new Error("Datos de cotización incompletos")
       }
 
-      // Hacer la petición al endpoint de generación de PDF
-      const baseUrl =
-        process.env.NEXT_PUBLIC_BASE_URL ||
-        (typeof window !== "undefined" ? window.location.origin : "http://localhost:3000")
-
-      const response = await fetch(`${baseUrl}/api/generate-pdf`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datos_cotizacion),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || `Error HTTP: ${response.status}`)
+      // Retornar señal para activar descarga en el cliente
+      return {
+        mensaje:
+          "¡Perfecto! Tu cotización se está preparando para descarga. El archivo PDF se descargará automáticamente en unos segundos...",
+        descargar_pdf: true,
+        datos_cotizacion: datos_cotizacion,
       }
-
-      return "¡PDF generado exitosamente! El archivo se ha descargado automáticamente. Si no se descargó, verifica tu carpeta de descargas o intenta nuevamente."
     } catch (error) {
-      console.error("Error generando PDF:", error)
-      return `Hubo un error generando el PDF: ${error instanceof Error ? error.message : "Error desconocido"}. Por favor intenta nuevamente.`
+      console.error("Error preparando PDF:", error)
+      return {
+        mensaje: `Hubo un error preparando el PDF: ${error instanceof Error ? error.message : "Error desconocido"}. Por favor intenta nuevamente.`,
+        descargar_pdf: false,
+      }
     }
   },
 })
