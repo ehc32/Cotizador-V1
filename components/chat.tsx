@@ -92,7 +92,7 @@ export default function Chat() {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 30000)
 
-        const response = await fetch("https://88b0-200-118-145-4.ngrok-free.app/generar-word", {
+        const response = await fetch("https://scripts-js.onrender.com/generar-word", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
