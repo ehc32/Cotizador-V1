@@ -3,8 +3,8 @@ import { z } from "zod"
 
 // Configuración de precios del documento
 const PRECIOS_CONFIG = {
-  diseno_por_m2: 25000,
-  construccion_por_m2: 850000,
+  diseno_por_m2: 127000,
+  construccion_por_m2: 1500000,
   areas_base: {
     cocina: 11.5, // 4,5x2,5
     sala: 13.5, // 4,5x3
@@ -167,9 +167,6 @@ export const cotizadorTool = tool({
       }))
 
       const resultado = {
-        informacion_cliente: {
-          tiene_lote: tiene_lote === "si" ? "Sí" : "No, en proceso de compra",
-        },
         resumen: {
           area_total: Math.round(area_total * 100) / 100,
           areas_base: Math.round(areas_base * 100) / 100,
@@ -219,8 +216,11 @@ export const descargarPDFTool = tool({
   parameters: z.object({
     confirmar_descarga: z.boolean().describe("Confirmación del usuario para descargar el PDF"),
     datos_cotizacion: z.any().describe("Datos completos de la cotización para incluir en el PDF"),
+    nombre_cliente: z.string().describe("Nombre del cliente"),
+    correo_cliente: z.string().email().describe("Correo electrónico del cliente"),
+    telefono_cliente: z.string().describe("Teléfono del cliente"),
   }),
-  execute: async ({ confirmar_descarga, datos_cotizacion }) => {
+  execute: async ({ confirmar_descarga, datos_cotizacion, nombre_cliente, correo_cliente, telefono_cliente }) => {
     if (!confirmar_descarga) {
       return {
         mensaje: "Descarga cancelada. ¿Hay algo más en lo que pueda ayudarte?",
@@ -235,11 +235,30 @@ export const descargarPDFTool = tool({
       }
 
       // Retornar señal para activar descarga en el cliente
+      // Formatear la fecha actual
+      const fecha = new Date().toLocaleDateString('es-CO', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).replace(/de /, ' de ')
+
+      // Agregar información del cliente y fecha a los datos de cotización
+      const datos_completos = {
+        ...datos_cotizacion,
+        informacion_cliente: {
+          ...datos_cotizacion.informacion_cliente,
+          nombre: nombre_cliente,
+          correo: correo_cliente,
+          telefono: telefono_cliente,
+          fecha: fecha
+        }
+      }
+
       return {
         mensaje:
           "¡Perfecto! Tu cotización se está preparando para descarga. El archivo PDF se descargará automáticamente en unos segundos...",
         descargar_pdf: true,
-        datos_cotizacion: datos_cotizacion,
+        datos_cotizacion: datos_completos,
       }
     } catch (error) {
       console.error("Error preparando PDF:", error)

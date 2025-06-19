@@ -29,6 +29,12 @@ interface CotizacionData {
       cantidad?: number
     }
   }
+  informacion_cliente?: {
+    nombre?: string
+    correo?: string
+    telefono?: string
+    fecha?: string
+  }
 }
 
 interface PDFData {
@@ -46,6 +52,10 @@ interface PDFData {
   habitacion_principal: string
   habitaciones_adicionales: number
   espacios_adicionales: number
+  nombre?: string
+  correo?: string
+  telefono?: string
+  fecha?: string
 }
 
 export default function Chat() {
@@ -81,18 +91,23 @@ export default function Chat() {
           Presupuesta: cotizacionData.cotizacion?.construccion || "$ 0",
           Subtotal_2: "",
           Total: cotizacionData.cotizacion?.total || "$ 0",
-          texto: `Cotización para proyecto de ${cotizacionData.resumen?.area_total || 0}m²`,
+          texto: `${new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' }).replace(/de /, ' de ')}\n\nSeñor(a)\n${cotizacionData.informacion_cliente?.nombre || ""}\n${cotizacionData.informacion_cliente?.correo || ""}\n\nCotización para proyecto de ${cotizacionData.resumen?.area_total || 0}m²`,
           area_total: cotizacionData.resumen?.area_total || 0,
           habitacion_principal: cotizacionData.resumen?.habitacion_principal?.tipo_cama || "",
           habitaciones_adicionales: cotizacionData.resumen?.habitaciones_adicionales?.cantidad || 0,
           espacios_adicionales: cotizacionData.resumen?.espacios_adicionales?.cantidad || 0,
+          nombre: cotizacionData.informacion_cliente?.nombre || "",
+          correo: cotizacionData.informacion_cliente?.correo || "",
+          telefono: cotizacionData.informacion_cliente?.telefono || "",
+          fecha: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }),
+          
         }
 
         // Llamar al servicio de generación de PDF
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 30000)
 
-        const response = await fetch("https://scripts-js.onrender.com/generar-word", {
+        const response = await fetch("https://cotizador-scrips.onrender.com/generar-word", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -119,7 +134,7 @@ export default function Chat() {
         const a = document.createElement("a")
         a.style.display = "none"
         a.href = url
-        a.download = `cotizacion_saave_${Date.now()}.docx`
+        a.download = `cotizacion_saave_${Date.now()}.pdf`
 
         document.body.appendChild(a)
         a.click()
