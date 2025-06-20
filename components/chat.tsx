@@ -107,7 +107,7 @@ export default function Chat() {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 30000)
 
-        const response = await fetch("https://cotizador-scrips.onrender.com/generar-word", {
+        const response = await fetch("https://cotizador-scrips-i48a.onrender.com/generar-word", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -134,7 +134,7 @@ export default function Chat() {
         const a = document.createElement("a")
         a.style.display = "none"
         a.href = url
-        a.download = `cotizacion_saave_${Date.now()}.pdf`
+        a.download = `cotizacion_saave_${Date.now()}.docx`
 
         document.body.appendChild(a)
         a.click()
